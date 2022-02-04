@@ -12,8 +12,6 @@ class MapWindow(ttk.Frame):
     def __init__(self, mainframe, path):
         """ Initialize the main Frame """
         ttk.Frame.__init__(self, master=mainframe)
-        #self.master.title('Advanced Zoom v3.0')
-        #self.master.geometry('900x600')  # size of the main window
         self.master.rowconfigure(0, weight=1)  # make the CanvasImage widget expandable
         self.master.columnconfigure(0, weight=1)
         canvas = cvImg.CanvasImage(self.master, path, appWidth, appHeight)  # create widget

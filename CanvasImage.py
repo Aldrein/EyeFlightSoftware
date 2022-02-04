@@ -27,7 +27,7 @@ class CanvasImage:
     def __init__(self, placeholder, path, width, height):
         """ Initialize the ImageFrame """
         self.imscale = 1.0  # scale for the canvas image zoom, public for outer classes
-        self.__delta = 1.5  # zoom magnitude
+        self.__delta = 1.3  # zoom magnitude
         self.__filter = Image.ANTIALIAS  # could be: NEAREST, BILINEAR, BICUBIC and ANTIALIAS
         self.__previous_state = 0  # previous state of the keyboard
         self.path = path  # path to the image, should be public for outer classes
