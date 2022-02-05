@@ -4,30 +4,67 @@ from tkinter import Canvas, ttk
 from pathlib import Path
 import CanvasImage as cvImg
 
+# Window size and position variables
 appWidth = 1024
 appHeight = 600
+appOffsetX = 250
+appOffsetY = 100
 
-class MapWindow(ttk.Frame):
+class MapWindow(tk.Frame):
     """ Main window class """
     def __init__(self, mainframe, path):
         """ Initialize the main Frame """
-        ttk.Frame.__init__(self, master=mainframe)
+        tk.Frame.__init__(self, master=mainframe)
         self.master.rowconfigure(0, weight=1)  # make the CanvasImage widget expandable
         self.master.columnconfigure(0, weight=1)
-        canvas = cvImg.CanvasImage(self.master, path, appWidth, appHeight)  # create widget
-        canvas.movecenter()
-        canvas.grid(row=0, column=0)  # show widget
+        self.canvas = cvImg.CanvasImage(self.master, path, appWidth, appHeight)  # create widget
+        self.canvas.movecenter()
+        self.canvas.grid(row=0, column=0)  # show widget
 
-filename = Path(Path(__file__).parent.resolve(), 'OACI_11_L93_E100.png')
-win = tk.Tk()
-win.geometry(f'{appWidth}x{appHeight}')
-mapFrameRoot = ttk.Frame()
-mapFrame = MapWindow(mapFrameRoot, path=filename)
-mapFrameRoot.place(x=0, y=0)
-b1 = ttk.Button(win, text='Quit', width=10, command=win.destroy)
-b1.place(anchor='ne',relx=1.0, rely=0.0)
-win.overrideredirect(1) #without borders
-#win.wm_attributes('-fullscreen', 'True') #fullscreen
+class EyeFlight(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+        filename = Path(Path(__file__).parent.resolve(), 'OACI_11_L93_E100.png')
+        mapFrameRoot = tk.Frame(master=self.parent)
+        self.mapFrame = MapWindow(mapFrameRoot, path=filename)
+        mapFrameRoot.place(x=0, y=0)
+        self.buttonFrame = tk.Frame(master=self.parent)
+        self.buttonFrame.place(x=0, y=0)
+        self.__buttonPlacement()
+
+    def __buttonPlacement(self):
+        # Top Menu
+        quitButton = tk.Button(self.parent, text='Quit', command=self.parent.destroy)
+        quitButton.place(anchor='ne', relx=1.0, rely=0.0, relwidth=.03, relheight=.04)
+        weatherButton = tk.Button(self.parent, text='Météo')
+        weatherButton.place(anchor='n', relx=0.2, rely=0.0, relwidth=.08, relheight=.1)
+        docButton = tk.Button(self.parent, text='Documents')
+        docButton.place(anchor='n', relx=0.35, rely=0.0, relwidth=.08, relheight=.1)
+        navigationButton = tk.Button(self.parent, text='Navigation')
+        navigationButton.place(anchor='n', relx=0.5, rely=0.0, relwidth=.08, relheight=.1)
+        historyButton = tk.Button(self.parent, text='Historique')
+        historyButton.place(anchor='n', relx=0.65, rely=0.0, relwidth=.08, relheight=.1)
+        parameterButton = tk.Button(self.parent, text='Paramètres')
+        parameterButton.place(anchor='n', relx=0.8, rely=0.0, relwidth=.08, relheight=.1)
+
+        # Side Menu
+        mapBackgroundButton = tk.Button(self.parent, text='Fond de carte')
+        mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
+        trafficButton = tk.Button(self.parent, text='Traffic')
+        trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
+        centerButton = tk.Button(self.parent, text='Centrer', command=self.mapFrame.canvas.movecenter)
+        centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
+        northUpButton = tk.Button(self.parent, text='Nord en haut')
+        northUpButton.place(anchor='e', relx=1.0, rely=.6, relwidth=.08, relheight=.1)
+        displayButton = tk.Button(self.parent, text='Affichages')
+        displayButton.place(anchor='e', relx=1.0, rely=.7, relwidth=.08, relheight=.1)
 
 if __name__=='__main__':
+    win = tk.Tk()
+    win.geometry(f'{appWidth}x{appHeight}+{appOffsetX}+{appOffsetY}')
+    win.title('EyeFlightSoftware')
+    #win.overrideredirect(1) #without borders
+    #win.wm_attributes('-fullscreen', 'True') #fullscreen
+    EyeFlight(win).pack(side='top', fill='both', expand=True)
     win.mainloop()
