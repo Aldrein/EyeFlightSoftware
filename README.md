@@ -1,6 +1,6 @@
 # EyeFlightSoftware
 
-In development verrsion of EyeFlightSoftware
+In development version of EyeFlightSoftware
 This is a GPS software adapted for civilian aircraft
 
 ## Dependencies
