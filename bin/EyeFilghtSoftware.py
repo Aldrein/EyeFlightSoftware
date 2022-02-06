@@ -67,9 +67,9 @@ class EyeFlight(tk.Frame):
         # Side Menu
         mapBackgroundButton = tk.Button(self.parent, text='Fond de carte', image=self.mapBackground)
         mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
-        trafficButton = tk.Button(self.parent, text='Traffic', command=self.testPlane)
+        trafficButton = tk.Button(self.parent, text='Traffic', image=self.traffic, command=self.testPlane)
         trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
-        centerButton = tk.Button(self.parent, text='Centrer', command=self.mapFrame.canvas.centerOnPlane)
+        centerButton = tk.Button(self.parent, text='Centrer', image=self.center, command=self.mapFrame.canvas.centerOnPlane)
         centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
         northUpButton = tk.Button(self.parent, text='Nord en haut', image=self.northUp)
         northUpButton.place(anchor='e', relx=1.0, rely=.6, relwidth=.08, relheight=.1)
