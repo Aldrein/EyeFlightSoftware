@@ -1,27 +1,14 @@
 # -*- coding: utf-8 -*-
 # Advanced zoom for images of various types from small to huge up to several GB
 import math
-from pathlib import Path
 import warnings
 import tkinter as tk
 
 from tkinter import CENTER, ttk
 from PIL import Image, ImageTk
+from numpy import deprecate
 
-class AutoScrollbar(ttk.Scrollbar):
-    """ A scrollbar that hides itself if it's not needed. Works only for grid geometry manager """
-    def set(self, lo, hi):
-        if float(lo) <= 0.0 and float(hi) >= 1.0:
-            self.grid_remove()
-        else:
-            self.grid()
-            ttk.Scrollbar.set(self, lo, hi)
 
-    def pack(self, **kw):
-        raise tk.TclError('Cannot use pack with the widget ' + self.__class__.__name__)
-
-    def place(self, **kw):
-        raise tk.TclError('Cannot use place with the widget ' + self.__class__.__name__)
 
 class CanvasImage:
     """ Display and zoom image """
@@ -55,6 +42,7 @@ class CanvasImage:
         self.canvas.bind('<Button-5>',   self.__wheel)  # zoom for Linux, wheel scroll down
         self.canvas.bind('<Button-4>',   self.__wheel)  # zoom for Linux, wheel scroll up
         self.canvas.bind('<Double-Button-1>', self.__centerimg)
+        self.canvas.bind('<Motion>', self.__debugmotion)
         # Handle keystrokes in idle mode, because program slows down on a weak computers,
         # when too many key stroke events in the same time
         self.canvas.bind('<Key>', lambda event: self.canvas.after_idle(self.__keystroke, event))
@@ -232,6 +220,12 @@ class CanvasImage:
         imgCenterx = imgW / 2
         imgCentery = imgH / 2
         self.moveimg(imgCenterx, imgCentery)
+        #self.moveimg(self.getCanvasx(4000), self.getCanvasy(4000))
+
+    def centerOnPlane(self):
+        x = self.getCanvasx(self.planeX)
+        y = self.getCanvasy(self.planeY)
+        self.moveimg(x, y)
 
     def moveimg(self, x, y):
         """Move to a given position :
@@ -246,22 +240,49 @@ class CanvasImage:
         self.canvas.move('all', int(xOffset), int(yOffset))
         self.__show_image()
 
-    def getImagex(self):
-        """Returns the x position of the center of the window in Image coordinate"""
-        return self.canvas.canvasx(0) - self.canvas.coords(self.container)[0] + (self.canvas.winfo_width() / 2)
+    def getImageCenterx(self):
+        """Returns the x position of the center of the window in Image Coordinates"""
+        imgCenterx = self.canvas.canvasx(0) + (self.canvas.winfo_width() / 2)
+        return self.getImagex(imgCenterx)
 
-    def getImagey(self):
-        """Returns the y position of the center of the window in Image coordinate"""
-        return self.canvas.canvasx(0) - self.canvas.coords(self.container)[1] + (self.canvas.winfo_height() / 2)
+    def getImageCentery(self):
+        """Returns the y position of the center of the window in Image Coordinates"""
+        imgCentery = self.canvas.canvasy(0) + (self.canvas.winfo_height() / 2)
+        return self.getImagey(imgCentery)
 
     def getCanvasx(self, x):
-        """Returns the x position in Canvas coordinates from x in Image coordinates"""
-        return self.canvas.canvasx(x + self.canvas.coords(self.container)[0])
+        """Returns the x position in Canvas Coordinates from x in Image Coordinates"""
+        canvasX = (x * self.getCurrentZoomRatio()) + self.getCurrentOffsetX()
+        return self.canvas.canvasx(canvasX)
 
     def getCanvasy(self, y):
-        """Returns the y position in Canvas coordinates from y in Image coordinates"""
-        return self.canvas.canvasy(y + self.canvas.coords(self.container)[1])
+        """Returns the y position in Canvas Coordinates from y in Image Coordinates"""
+        canvasY = (y * self.getCurrentZoomRatio()) + self.getCurrentOffsetY()
+        return self.canvas.canvasy(canvasY)
 
+    def getImagex(self, x):
+        """Returns the x position in Image Coordinates from x in Canvas Coordinates"""
+        imageX = (x - self.getCurrentOffsetX()) / self.getCurrentZoomRatio()
+        return imageX
+
+    def getImagey(self, y):
+        """Returns the y position in Image Coordinates from y in Canvas Coordinates"""
+        imageY = (y - self.getCurrentOffsetY()) / self.getCurrentZoomRatio()
+        return imageY
+
+    def getCurrentZoomRatio(self):
+        """Returns the ratio of current image dimension / base image dimension"""
+        return (self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]) / self.imwidth
+
+    def getCurrentOffsetX(self):
+        """Returns the current x offset of the image position in Canvas Coordinates"""
+        return self.canvas.coords(self.container)[0]
+
+    def getCurrentOffsetY(self):
+        """Returns the current y offset of the image position in Canvas Coordinates"""
+        return self.canvas.coords(self.container)[1]
+
+    @deprecate
     def getZoomIntensity(self):
         """Returns an estimation of the zoom intensity"""
         return ((self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]) / self.imwidth) ** 2
@@ -278,11 +299,13 @@ class CanvasImage:
         cy = cont[1]
         cImgx = self.canvas.canvasx(event.x) - self.canvas.coords(self.container)[0] # Cursor position on the image itself
         cImgy = self.canvas.canvasy(event.y) - self.canvas.coords(self.container)[1]
+        cImgx /= self.getCurrentZoomRatio() # Cursor Position in Image Coordinates
+        cImgy /= self.getCurrentZoomRatio()
         imgW = self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0] # Image dimension on canvas
         imgH = self.canvas.coords(self.container)[3] - self.canvas.coords(self.container)[1]
         imgOriginx = self.canvas.canvasx(0) - self.canvas.coords(self.container)[0] # Top left corner position on image
         imgOriginy = self.canvas.canvasy(0) - self.canvas.coords(self.container)[1]
-        #print(f'Cursor on Screen : {sx} {sy} -- Cursor on Image : {cImgx} {cImgy} -- Image dimension on Canvas : {imgW} {imgH} -- Top left corner on image : {imgOriginx} {imgOriginy}')
+        print(f'Center position : {self.getImageCenterx()} {self.getImageCentery()} -- Cursor on Image : {cImgx} {cImgy} -- Image dimension on Canvas : {imgW} {imgH} -- Top left corner on image : {imgOriginx} {imgOriginy}')
 
     def outside(self, x, y):
         """ Checks if the point (x,y) is outside the image area """
