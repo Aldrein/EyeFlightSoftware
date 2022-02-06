@@ -7,7 +7,6 @@ import tkinter as tk
 
 from tkinter import CENTER, ttk
 from PIL import Image, ImageTk
-from sqlalchemy import null
 
 class AutoScrollbar(ttk.Scrollbar):
     """ A scrollbar that hides itself if it's not needed. Works only for grid geometry manager """
