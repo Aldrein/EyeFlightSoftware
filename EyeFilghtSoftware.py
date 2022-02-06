@@ -19,6 +19,8 @@ class MapWindow(tk.Frame):
         self.master.columnconfigure(0, weight=1)
         self.canvas = cvImg.CanvasImage(self.master, path, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
+        planePath = Path(Path(__file__).parent.resolve(), 'aircraft.png')
+        self.canvas.drawPlane(4000, 4000, -45)
         self.canvas.grid(row=0, column=0)  # show widget
 
 class EyeFlight(tk.Frame):
@@ -64,6 +66,7 @@ if __name__=='__main__':
     win = tk.Tk()
     win.geometry(f'{appWidth}x{appHeight}+{appOffsetX}+{appOffsetY}')
     win.title('EyeFlightSoftware')
+    win.configure(bg='black')
     #win.overrideredirect(1) #without borders
     #win.wm_attributes('-fullscreen', 'True') #fullscreen
     EyeFlight(win).pack(side='top', fill='both', expand=True)

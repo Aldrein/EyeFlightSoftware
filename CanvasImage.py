@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # Advanced zoom for images of various types from small to huge up to several GB
 import math
+from pathlib import Path
 import warnings
 import tkinter as tk
 
-from tkinter import ttk
+from tkinter import CENTER, ttk
 from PIL import Image, ImageTk
+from sqlalchemy import null
 
 class AutoScrollbar(ttk.Scrollbar):
     """ A scrollbar that hides itself if it's not needed. Works only for grid geometry manager """
@@ -90,6 +92,13 @@ class CanvasImage:
         self.container = self.canvas.create_rectangle((0, 0, self.imwidth, self.imheight), width=0)
         self.__show_image()  # show image on the canvas
         self.canvas.focus_set()  # set focus on the canvas
+
+        self.planeImg = Image.open(Path(Path(__file__).parent.resolve(), 'aircraft.png'))
+        self.planeX = 0
+        self.planeY = 0
+        self.planeAngle = 0
+        self.planeId = None
+        self.drawPlane(self.planeX, self.planeY, self.planeAngle)
 
     def smaller(self):
         """ Resize image proportionally and return smaller image """
@@ -244,6 +253,18 @@ class CanvasImage:
     def getImagey(self):
         """Returns the y position of the center of the window in Image coordinate"""
         return self.canvas.canvasx(0) - self.canvas.coords(self.container)[1] + (self.canvas.winfo_height() / 2)
+
+    def getCanvasx(self, x):
+        """Returns the x position in Canvas coordinates from x in Image coordinates"""
+        return self.canvas.canvasx(x + self.canvas.coords(self.container)[0])
+
+    def getCanvasy(self, y):
+        """Returns the y position in Canvas coordinates from y in Image coordinates"""
+        return self.canvas.canvasy(y + self.canvas.coords(self.container)[1])
+
+    def getZoomIntensity(self):
+        """Returns an estimation of the zoom intensity"""
+        return ((self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]) / self.imwidth) ** 2
     
     def __debugmotion(self, event):
         sx = event.x
@@ -327,6 +348,17 @@ class CanvasImage:
             return self.__image.crop((bbox[0], 0, bbox[2], band))
         else:  # image is totally in RAM
             return self.__pyramid[0].crop(bbox)
+
+
+    def drawPlane(self, x, y, angle):
+        """ Creates the plane with x & y coordinates (image) and angle of direction """
+        self.planeX = x
+        self.planeY = y
+        self.planeAngle = angle
+        self.planeImgTk = ImageTk.PhotoImage(self.planeImg.resize((int(80/self.getZoomIntensity()), int(80/self.getZoomIntensity()))).rotate(self.planeAngle))
+        self.planeId = self.canvas.create_image(self.getCanvasx(self.planeX), self.getCanvasy(self.planeY), image=self.planeImgTk)
+        self.canvas.lift(self.planeId)
+        
 
     def destroy(self):
         """ ImageFrame destructor """
