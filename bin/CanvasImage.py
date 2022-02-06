@@ -25,13 +25,14 @@ class AutoScrollbar(ttk.Scrollbar):
 
 class CanvasImage:
     """ Display and zoom image """
-    def __init__(self, placeholder, path, width, height):
+    def __init__(self, placeholder, path, planePath, width, height):
         """ Initialize the ImageFrame """
         self.imscale = 1.0  # scale for the canvas image zoom, public for outer classes
         self.__delta = 1.3  # zoom magnitude
         self.__filter = Image.ANTIALIAS  # could be: NEAREST, BILINEAR, BICUBIC and ANTIALIAS
         self.__previous_state = 0  # previous state of the keyboard
         self.path = path  # path to the image, should be public for outer classes
+        self.planePath = planePath
         # Create ImageFrame in placeholder widget
         self.__imframe = ttk.Frame(placeholder)  # placeholder of the ImageFrame object
         # Vertical and horizontal scrollbars for canvas
@@ -92,7 +93,7 @@ class CanvasImage:
         self.__show_image()  # show image on the canvas
         self.canvas.focus_set()  # set focus on the canvas
 
-        self.planeImg = Image.open(Path(Path(__file__).parent.resolve(), 'aircraft.png'))
+        self.planeImg = Image.open(self.planePath)
         self.planeX = 0
         self.planeY = 0
         self.planeAngle = 0

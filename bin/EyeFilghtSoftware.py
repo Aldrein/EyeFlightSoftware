@@ -10,16 +10,19 @@ appHeight = 600
 appOffsetX = 250
 appOffsetY = 100
 
+# Project path
+projectPath = Path(__file__).parents[1].resolve()
+print(projectPath)
+
 class MapWindow(tk.Frame):
     """ Main window class """
-    def __init__(self, mainframe, path):
+    def __init__(self, mainframe, path, planePath):
         """ Initialize the main Frame """
         tk.Frame.__init__(self, master=mainframe)
         self.master.rowconfigure(0, weight=1)  # make the CanvasImage widget expandable
         self.master.columnconfigure(0, weight=1)
-        self.canvas = cvImg.CanvasImage(self.master, path, appWidth, appHeight)  # create widget
+        self.canvas = cvImg.CanvasImage(self.master, path, planePath, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
-        planePath = Path(Path(__file__).parent.resolve(), 'aircraft.png')
         self.canvas.drawPlane(4000, 4000, -45)
         self.canvas.grid(row=0, column=0)  # show widget
 
@@ -27,9 +30,10 @@ class EyeFlight(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        filename = Path(Path(__file__).parent.resolve(), 'OACI_11_L93_E100.png')
+        filename = Path(projectPath, 'img//OACI_11_L93_E100.png')
+        planePath = Path(projectPath, 'img//aircraft.png')
         mapFrameRoot = tk.Frame(master=self.parent)
-        self.mapFrame = MapWindow(mapFrameRoot, path=filename)
+        self.mapFrame = MapWindow(mapFrameRoot, path=filename, planePath=planePath)
         mapFrameRoot.place(x=0, y=0)
         self.buttonFrame = tk.Frame(master=self.parent)
         self.buttonFrame.place(x=0, y=0)
