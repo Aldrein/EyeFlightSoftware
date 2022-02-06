@@ -1,6 +1,4 @@
 import tkinter as tk
-
-from tkinter import Canvas, ttk
 from pathlib import Path
 import CanvasImage as cvImg
 
@@ -23,7 +21,7 @@ class MapWindow(tk.Frame):
         self.master.columnconfigure(0, weight=1)
         self.canvas = cvImg.CanvasImage(self.master, path, planePath, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
-        self.canvas.drawPlane(4000, 4000, -45)
+        self.canvas.drawPlane(3500, 3500, 0)
         self.canvas.grid(row=0, column=0)  # show widget
 
 class EyeFlight(tk.Frame):
@@ -57,14 +55,17 @@ class EyeFlight(tk.Frame):
         # Side Menu
         mapBackgroundButton = tk.Button(self.parent, text='Fond de carte')
         mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
-        trafficButton = tk.Button(self.parent, text='Traffic')
+        trafficButton = tk.Button(self.parent, text='Traffic', command=self.testPlane)
         trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
-        centerButton = tk.Button(self.parent, text='Centrer', command=self.mapFrame.canvas.movecenter)
+        centerButton = tk.Button(self.parent, text='Centrer', command=self.mapFrame.canvas.centerOnPlane)
         centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
         northUpButton = tk.Button(self.parent, text='Nord en haut')
         northUpButton.place(anchor='e', relx=1.0, rely=.6, relwidth=.08, relheight=.1)
         displayButton = tk.Button(self.parent, text='Affichages')
         displayButton.place(anchor='e', relx=1.0, rely=.7, relwidth=.08, relheight=.1)
+
+    def testPlane(self):
+        self.mapFrame.canvas.drawPlane(2000, 2000, 0)
 
 if __name__=='__main__':
     win = tk.Tk()
