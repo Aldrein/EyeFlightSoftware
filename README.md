@@ -9,9 +9,7 @@ Anaconda 4.10.3 is recommended or at least Python 3.9.7 with Tkinter 8.6 and Pil
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
-
-MIT License
+[MIT](https://choosealicense.com/licenses/mit/) License
 
 Copyright (c) 2022 EyeFlight
 
