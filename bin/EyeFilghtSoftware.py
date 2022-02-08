@@ -1,5 +1,6 @@
 import time
 import tkinter as tk
+from tkinter import font
 from pathlib import Path
 import CanvasImage as cvImg
 
@@ -8,6 +9,10 @@ appWidth = 1024
 appHeight = 600
 appOffsetX = 250
 appOffsetY = 100
+
+# Color setup
+darkGrayColor = '#1c1c1c' # Base button background
+grayColor = '#2e2e2e' # Active button background
 
 # Project path
 projectPath = Path(__file__).parents[1].resolve()
@@ -36,60 +41,73 @@ class EyeFlight(tk.Frame):
         mapFrameRoot.place(x=0, y=0)
         self.UIFrame = tk.Frame(master=self.parent)
         self.UIFrame.place(x=0, y=0)
+        self.dataFrame = tk.Frame(master=self.parent, bg=darkGrayColor, border=0)
+        self.dataFrame.place(anchor='sw', relx=0.0, rely=1.0, relheight=.3, relwidth=.25)
         self.__createUI()
 
     def __createUI(self):
         self.__buttonPlacement()
+        self.__dataPlacement()
 
     def __buttonPlacement(self):
         #Icons setup
-        weatherIcon = tk.PhotoImage(file = 'img//icons//weather.png')
-        docIcon = tk.PhotoImage(file = 'img//icons//doc.png')
-        navigationIcon = tk.PhotoImage(file = 'img//icons//navigation.png')
-        historyIcon = tk.PhotoImage(file = 'img//icons//history.png')
-        parametersIcon = tk.PhotoImage(file = 'img//icons//parameters.png')
-        mapBackgroundIcon = tk.PhotoImage(file = 'img//icons//mapBackground.png')
-        trafficIcon = tk.PhotoImage(file = 'img//icons//traffic.png')
-        centerIcon = tk.PhotoImage(file = 'img//icons//center.png')
-        northUpIcon = tk.PhotoImage(file = 'img//icons//northUp.png')
-        displayIcon = tk.PhotoImage(file = 'img//icons//display.png')
+        weatherIcon = tk.PhotoImage(file = 'img//icons//weatherInvert.png')
+        docIcon = tk.PhotoImage(file = 'img//icons//docInvert.png')
+        navigationIcon = tk.PhotoImage(file = 'img//icons//navigationInvert.png')
+        historyIcon = tk.PhotoImage(file = 'img//icons//historyInvert.png')
+        parametersIcon = tk.PhotoImage(file = 'img//icons//parametersInvert.png')
+        mapBackgroundIcon = tk.PhotoImage(file = 'img//icons//mapBackgroundInvert.png')
+        trafficIcon = tk.PhotoImage(file = 'img//icons//trafficInvert.png')
+        centerIcon = tk.PhotoImage(file = 'img//icons//centerInvert.png')
+        northUpIcon = tk.PhotoImage(file = 'img//icons//northUpInvert.png')
+        displayIcon = tk.PhotoImage(file = 'img//icons//displayInvert.png')
+
 
         # Top Menu
-        quitButton = tk.Button(self.parent, text='Quit', command=self.parent.destroy)
+        quitButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, fg='white', text='Quit', command=self.parent.destroy)
         quitButton.place(anchor='ne', relx=1.0, rely=0.0, relwidth=.03, relheight=.04)
-        weatherButton = tk.Button(self.parent, text='Météo', image=weatherIcon)
+        weatherButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Météo', image=weatherIcon)
         weatherButton.place(anchor='n', relx=0.2, rely=0.0, relwidth=.08, relheight=.1)
         weatherButton.icon = weatherIcon
-        docButton = tk.Button(self.parent, text='Documents', image=docIcon)
+        docButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Documents', image=docIcon)
         docButton.place(anchor='n', relx=0.35, rely=0.0, relwidth=.08, relheight=.1)
         docButton.icon = docIcon
-        navigationButton = tk.Button(self.parent, text='Navigation', image=navigationIcon)
+        navigationButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Navigation', image=navigationIcon)
         navigationButton.place(anchor='n', relx=0.5, rely=0.0, relwidth=.08, relheight=.1)
         navigationButton.icon = navigationIcon
-        historyButton = tk.Button(self.parent, text='Historique', image=historyIcon)
+        historyButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Historique', image=historyIcon)
         historyButton.place(anchor='n', relx=0.65, rely=0.0, relwidth=.08, relheight=.1)
         historyButton.icon = historyIcon
-        parametersButton = tk.Button(self.parent, text='Paramètres', image=parametersIcon)
+        parametersButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Paramètres', image=parametersIcon)
         parametersButton.place(anchor='n', relx=0.8, rely=0.0, relwidth=.08, relheight=.1)
         parametersButton.icon = parametersIcon
 
         # Side Menu
-        mapBackgroundButton = tk.Button(self.parent, text='Fond de carte', image=mapBackgroundIcon)
+        mapBackgroundButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Fond de carte', image=mapBackgroundIcon)
         mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
         mapBackgroundButton.icon = mapBackgroundIcon
-        trafficButton = tk.Button(self.parent, text='Traffic', image=trafficIcon)
+        trafficButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Traffic', image=trafficIcon)
         trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
         trafficButton.icon = trafficIcon
-        centerButton = tk.Button(self.parent, text='Centrer', image=centerIcon, command=self.mapFrame.canvas.centerOnPlane)
+        centerButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Centrer', image=centerIcon, command=self.mapFrame.canvas.centerOnPlane)
         centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
         centerButton.icon = centerIcon
-        northUpButton = tk.Button(self.parent, text='Nord en haut', image=northUpIcon)
+        northUpButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Nord en haut', image=northUpIcon)
         northUpButton.place(anchor='e', relx=1.0, rely=.6, relwidth=.08, relheight=.1)
         northUpButton.icon = northUpIcon
-        displayButton = tk.Button(self.parent, text='Affichages', image=displayIcon)
+        displayButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Affichages', image=displayIcon)
         displayButton.place(anchor='e', relx=1.0, rely=.7, relwidth=.08, relheight=.1)
         displayButton.icon = displayIcon
 
+    def __dataPlacement(self):
+        dataFont = font.Font(family='Ubuntu', size=18)
+        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[LATITUDE]', font=dataFont)
+        latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
+        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[LONGITUDE]', font=dataFont)
+        longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
+        altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[ALTITUDE]', font=dataFont)
+        altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
+        
 
 def loop():
     """ Main program loop running alongside Tkinter mainloop """
