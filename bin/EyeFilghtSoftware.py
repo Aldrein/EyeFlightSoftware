@@ -51,6 +51,7 @@ class EyeFlight(tk.Frame):
 
     def __buttonPlacement(self):
         #Icons setup
+        exitIcon = tk.PhotoImage(file = 'img//icons//exitInvert.png')
         weatherIcon = tk.PhotoImage(file = 'img//icons//weatherInvert.png')
         docIcon = tk.PhotoImage(file = 'img//icons//docInvert.png')
         navigationIcon = tk.PhotoImage(file = 'img//icons//navigationInvert.png')
@@ -64,8 +65,9 @@ class EyeFlight(tk.Frame):
 
 
         # Top Menu
-        quitButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, fg='white', text='Quit', command=self.parent.destroy)
-        quitButton.place(anchor='ne', relx=1.0, rely=0.0, relwidth=.03, relheight=.04)
+        exitButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Exit', image=exitIcon, command=self.parent.destroy)
+        exitButton.place(anchor='ne', relx=1.0, rely=0.0, relwidth=.05, relheight=.08)
+        exitButton.icon = exitIcon
         weatherButton = tk.Button(self.parent, bg=darkGrayColor, activebackground=grayColor, border=0, text='Météo', image=weatherIcon)
         weatherButton.place(anchor='n', relx=0.2, rely=0.0, relwidth=.08, relheight=.1)
         weatherButton.icon = weatherIcon
