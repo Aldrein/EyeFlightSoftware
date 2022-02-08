@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 from pathlib import Path
 import CanvasImage as cvImg
@@ -14,7 +15,7 @@ print(projectPath)
 
 class MapWindow(tk.Frame):
     """ Main window class """
-    def __init__(self, mainframe, path, planePath):
+    def __init__(self, mainframe: tk.Frame, path: Path, planePath: Path):
         """ Initialize the main Frame """
         tk.Frame.__init__(self, master=mainframe)
         self.master.rowconfigure(0, weight=1)  # make the CanvasImage widget expandable
@@ -33,8 +34,11 @@ class EyeFlight(tk.Frame):
         mapFrameRoot = tk.Frame(master=self.parent)
         self.mapFrame = MapWindow(mapFrameRoot, path=filename, planePath=planePath)
         mapFrameRoot.place(x=0, y=0)
-        self.buttonFrame = tk.Frame(master=self.parent)
-        self.buttonFrame.place(x=0, y=0)
+        self.UIFrame = tk.Frame(master=self.parent)
+        self.UIFrame.place(x=0, y=0)
+        self.__createUI()
+
+    def __createUI(self):
         self.__buttonPlacement()
 
     def __buttonPlacement(self):
@@ -67,7 +71,7 @@ class EyeFlight(tk.Frame):
         # Side Menu
         mapBackgroundButton = tk.Button(self.parent, text='Fond de carte', image=self.mapBackground)
         mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
-        trafficButton = tk.Button(self.parent, text='Traffic', image=self.traffic, command=self.testPlane)
+        trafficButton = tk.Button(self.parent, text='Traffic', image=self.traffic)
         trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
         centerButton = tk.Button(self.parent, text='Centrer', image=self.center, command=self.mapFrame.canvas.centerOnPlane)
         centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
@@ -76,8 +80,12 @@ class EyeFlight(tk.Frame):
         displayButton = tk.Button(self.parent, text='Affichages', image=self.display)
         displayButton.place(anchor='e', relx=1.0, rely=.7, relwidth=.08, relheight=.1)
 
-    def testPlane(self):
-        self.mapFrame.canvas.drawPlane(2000, 2000, 0)
+
+def loop():
+    """ Main program loop running alongside Tkinter mainloop """
+    currentTime = time.strftime('%H:%M:%S - %d/%m/%Y')
+    win.title(f'EyeFlightSoftware {currentTime}')
+    win.after(1, loop) # loops the function
 
 if __name__=='__main__':
     win = tk.Tk()
@@ -87,4 +95,6 @@ if __name__=='__main__':
     #win.overrideredirect(1) #without borders
     #win.wm_attributes('-fullscreen', 'True') #fullscreen
     EyeFlight(win).pack(side='top', fill='both', expand=True)
+    win.after(0, loop)
     win.mainloop()
+
