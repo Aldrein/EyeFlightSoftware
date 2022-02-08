@@ -22,18 +22,10 @@ class CanvasImage:
         self.planePath = planePath
         # Create ImageFrame in placeholder widget
         self.__imframe = ttk.Frame(placeholder)  # placeholder of the ImageFrame object
-        # Vertical and horizontal scrollbars for canvas
-        #hbar = AutoScrollbar(self.__imframe, orient='horizontal')
-        #vbar = AutoScrollbar(self.__imframe, orient='vertical')
-        #hbar.grid(row=1, column=0, sticky='we')
-        #vbar.grid(row=0, column=1, sticky='ns')
         # Create canvas and bind it with scrollbars. Public for outer classes
         self.canvas = tk.Canvas(self.__imframe, highlightthickness=0, width=width, height=height)
-                                #xscrollcommand=hbar.set, yscrollcommand=vbar.set)
         self.canvas.grid(row=0, column=0, sticky='nswe')
         self.canvas.update()  # wait till canvas is created
-        #hbar.configure(command=self.__scroll_x)  # bind scrollbars to the canvas
-        #vbar.configure(command=self.__scroll_y)
         # Bind events to the Canvas
         self.canvas.bind('<Configure>', lambda event: self.__show_image())  # canvas is resized
         self.canvas.bind('<ButtonPress-1>', self.__move_from)  # remember canvas position
@@ -41,8 +33,8 @@ class CanvasImage:
         self.canvas.bind('<MouseWheel>', self.__wheel)  # zoom for Windows and MacOS, but not Linux
         self.canvas.bind('<Button-5>',   self.__wheel)  # zoom for Linux, wheel scroll down
         self.canvas.bind('<Button-4>',   self.__wheel)  # zoom for Linux, wheel scroll up
-        self.canvas.bind('<Double-Button-1>', self.__centerimg)
-        self.canvas.bind('<Motion>', self.__debugmotion)
+        self.canvas.bind('<Double-Button-1>', self.__centerimg) # double click to center the image
+        #self.canvas.bind('<Motion>', self.__debugmotion) # debug motion
         # Handle keystrokes in idle mode, because program slows down on a weak computers,
         # when too many key stroke events in the same time
         self.canvas.bind('<Key>', lambda event: self.canvas.after_idle(self.__keystroke, event))
@@ -215,78 +207,73 @@ class CanvasImage:
 
     def movecenter(self):
         """ Centers the image on the screen """
-        imgW = self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0] # Image dimension on canvas
-        imgH = self.canvas.coords(self.container)[3] - self.canvas.coords(self.container)[1]
-        imgCenterx = imgW / 2
-        imgCentery = imgH / 2
-        self.moveimg(imgCenterx, imgCentery)
-        #self.moveimg(self.getCanvasx(4000), self.getCanvasy(4000))
+        self.moveimg(self.imwidth/2, self.imheight/2)
 
     def centerOnPlane(self):
-        x = self.getCanvasx(self.planeX)
-        y = self.getCanvasy(self.planeY)
+        """ Centers the image on the position of the plane """
+        x = self.planeX
+        y = self.planeY
         self.moveimg(x, y)
 
     def moveimg(self, x, y):
-        """Move to a given position :
-            x & y are in image coordinate
-            position is located in the center of the screen once moved """
-        imgOriginx = self.canvas.canvasx(0) - self.canvas.coords(self.container)[0] # Top left corner position on image
-        imgOriginy = self.canvas.canvasy(0) - self.canvas.coords(self.container)[1]
-        imgDestinationOriginx = x - (self.canvas.winfo_width() / 2)
-        imgDestinationOriginy = y - (self.canvas.winfo_height() / 2)
-        xOffset = imgOriginx - imgDestinationOriginx
-        yOffset = imgOriginy - imgDestinationOriginy
+        """ Move to a given position :
+            x & y are in Image Coordinates
+            Position is located in the center of the screen """
+        xOffset = (self.getImageCenterx() - x) * self.getCurrentZoomRatio()
+        yOffset = (self.getImageCentery() - y) * self.getCurrentZoomRatio()
         self.canvas.move('all', int(xOffset), int(yOffset))
         self.__show_image()
 
     def getImageCenterx(self):
-        """Returns the x position of the center of the window in Image Coordinates"""
+        """ Returns the x position of the center of the window in Image Coordinates """
         imgCenterx = self.canvas.canvasx(0) + (self.canvas.winfo_width() / 2)
         return self.getImagex(imgCenterx)
 
     def getImageCentery(self):
-        """Returns the y position of the center of the window in Image Coordinates"""
+        """ Returns the y position of the center of the window in Image Coordinates """
         imgCentery = self.canvas.canvasy(0) + (self.canvas.winfo_height() / 2)
         return self.getImagey(imgCentery)
 
     def getCanvasx(self, x):
-        """Returns the x position in Canvas Coordinates from x in Image Coordinates"""
+        """ Returns the x position in Canvas Coordinates from x in Image Coordinates """
         canvasX = (x * self.getCurrentZoomRatio()) + self.getCurrentOffsetX()
         return self.canvas.canvasx(canvasX)
 
     def getCanvasy(self, y):
-        """Returns the y position in Canvas Coordinates from y in Image Coordinates"""
+        """ Returns the y position in Canvas Coordinates from y in Image Coordinates """
         canvasY = (y * self.getCurrentZoomRatio()) + self.getCurrentOffsetY()
         return self.canvas.canvasy(canvasY)
 
     def getImagex(self, x):
-        """Returns the x position in Image Coordinates from x in Canvas Coordinates"""
+        """ Returns the x position in Image Coordinates from x in Canvas Coordinates """
         imageX = (x - self.getCurrentOffsetX()) / self.getCurrentZoomRatio()
         return imageX
 
     def getImagey(self, y):
-        """Returns the y position in Image Coordinates from y in Canvas Coordinates"""
+        """ Returns the y position in Image Coordinates from y in Canvas Coordinates """
         imageY = (y - self.getCurrentOffsetY()) / self.getCurrentZoomRatio()
         return imageY
 
     def getCurrentZoomRatio(self):
-        """Returns the ratio of current image dimension / base image dimension"""
-        return (self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]) / self.imwidth
+        """ Returns the ratio of current image dimension / base image dimension """
+        return (self.getCurrentImageWidth()) / self.imwidth
 
     def getCurrentOffsetX(self):
-        """Returns the current x offset of the image position in Canvas Coordinates"""
+        """ Returns the current x offset of the image position in Canvas Coordinates """
         return self.canvas.coords(self.container)[0]
 
     def getCurrentOffsetY(self):
-        """Returns the current y offset of the image position in Canvas Coordinates"""
+        """ Returns the current y offset of the image position in Canvas Coordinates """
         return self.canvas.coords(self.container)[1]
 
-    @deprecate
-    def getZoomIntensity(self):
-        """Returns an estimation of the zoom intensity"""
-        return ((self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]) / self.imwidth) ** 2
-    
+    def getCurrentImageWidth(self):
+        """ Returns the current width of the image """
+        return self.canvas.coords(self.container)[2] - self.canvas.coords(self.container)[0]
+
+    def getCurrentImageHeight(self):
+        """ Returns the current height of the image """
+        return self.canvas.coords(self.container)[3] - self.canvas.coords(self.container)[1]
+
     def __debugmotion(self, event):
         sx = event.x
         sy = event.y
@@ -374,11 +361,11 @@ class CanvasImage:
 
 
     def drawPlane(self, x, y, angle):
-        """ Creates the plane with x & y coordinates (image) and angle of direction """
+        """ Creates the plane with x & y coordinates (image) and angle of direction in degrees """
         self.planeX = x
         self.planeY = y
         self.planeAngle = angle
-        self.planeImgTk = ImageTk.PhotoImage(self.planeImg.resize((int(80/self.getZoomIntensity()), int(80/self.getZoomIntensity()))).rotate(self.planeAngle))
+        self.planeImgTk = ImageTk.PhotoImage(self.planeImg.resize((80, 80)).rotate(self.planeAngle))
         self.planeId = self.canvas.create_image(self.getCanvasx(self.planeX), self.getCanvasy(self.planeY), image=self.planeImgTk)
         self.canvas.lift(self.planeId)
         
