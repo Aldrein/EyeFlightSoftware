@@ -1,4 +1,4 @@
-import time
+import datetime
 import tkinter as tk
 from tkinter import font
 from pathlib import Path
@@ -17,6 +17,8 @@ grayColor = '#2e2e2e' # Active button background
 # Project path
 projectPath = Path(__file__).parents[1].resolve()
 print(projectPath)
+
+timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
 
 class MapWindow(tk.Frame):
     """ Main window class """
@@ -113,8 +115,9 @@ class EyeFlight(tk.Frame):
 
 def loop():
     """ Main program loop running alongside Tkinter mainloop """
-    currentTime = time.strftime('%H:%M:%S - %d/%m/%Y')
-    win.title(f'EyeFlightSoftware {currentTime}')
+    currentTime = datetime.datetime.now().strftime(timeFormat)
+    delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
+    win.title(f'EyeFlightSoftware {delta}')
     win.after(1, loop) # loops the function
 
 if __name__=='__main__':
@@ -125,6 +128,7 @@ if __name__=='__main__':
     #win.overrideredirect(1) #without borders
     #win.wm_attributes('-fullscreen', 'True') #fullscreen
     EyeFlight(win).pack(side='top', fill='both', expand=True)
-    win.after(0, loop)
+    startTime = datetime.datetime.now().strftime(timeFormat)
+    win.after(200, loop)
     win.mainloop()
 
