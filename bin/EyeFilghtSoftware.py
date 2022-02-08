@@ -43,42 +43,52 @@ class EyeFlight(tk.Frame):
 
     def __buttonPlacement(self):
         #Icons setup
-        self.weather = tk.PhotoImage(file = 'img//weather.png')
-        self.doc = tk.PhotoImage(file = 'img//doc.png')
-        self.navigation = tk.PhotoImage(file = 'img//navigation.png')
-        self.history = tk.PhotoImage(file = 'img//history.png')
-        self.parameters = tk.PhotoImage(file = 'img//parameters.png')
-        self.mapBackground = tk.PhotoImage(file = 'img//mapBackground.png')
-        self.traffic = tk.PhotoImage(file = 'img//traffic.png')
-        self.center = tk.PhotoImage(file = 'img//center.png')
-        self.northUp = tk.PhotoImage(file = 'img//northUp.png')
-        self.display = tk.PhotoImage(file = 'img//display.png')
+        weatherIcon = tk.PhotoImage(file = 'img//icons//weather.png')
+        docIcon = tk.PhotoImage(file = 'img//icons//doc.png')
+        navigationIcon = tk.PhotoImage(file = 'img//icons//navigation.png')
+        historyIcon = tk.PhotoImage(file = 'img//icons//history.png')
+        parametersIcon = tk.PhotoImage(file = 'img//icons//parameters.png')
+        mapBackgroundIcon = tk.PhotoImage(file = 'img//icons//mapBackground.png')
+        trafficIcon = tk.PhotoImage(file = 'img//icons//traffic.png')
+        centerIcon = tk.PhotoImage(file = 'img//icons//center.png')
+        northUpIcon = tk.PhotoImage(file = 'img//icons//northUp.png')
+        displayIcon = tk.PhotoImage(file = 'img//icons//display.png')
 
         # Top Menu
         quitButton = tk.Button(self.parent, text='Quit', command=self.parent.destroy)
         quitButton.place(anchor='ne', relx=1.0, rely=0.0, relwidth=.03, relheight=.04)
-        weatherButton = tk.Button(self.parent, text='Météo', image=self.weather)
+        weatherButton = tk.Button(self.parent, text='Météo', image=weatherIcon)
         weatherButton.place(anchor='n', relx=0.2, rely=0.0, relwidth=.08, relheight=.1)
-        docButton = tk.Button(self.parent, text='Documents', image=self.doc)
+        weatherButton.icon = weatherIcon
+        docButton = tk.Button(self.parent, text='Documents', image=docIcon)
         docButton.place(anchor='n', relx=0.35, rely=0.0, relwidth=.08, relheight=.1)
-        navigationButton = tk.Button(self.parent, text='Navigation', image=self.navigation)
+        docButton.icon = docIcon
+        navigationButton = tk.Button(self.parent, text='Navigation', image=navigationIcon)
         navigationButton.place(anchor='n', relx=0.5, rely=0.0, relwidth=.08, relheight=.1)
-        historyButton = tk.Button(self.parent, text='Historique', image=self.history)
+        navigationButton.icon = navigationIcon
+        historyButton = tk.Button(self.parent, text='Historique', image=historyIcon)
         historyButton.place(anchor='n', relx=0.65, rely=0.0, relwidth=.08, relheight=.1)
-        parameterButton = tk.Button(self.parent, text='Paramètres', image=self.parameters)
-        parameterButton.place(anchor='n', relx=0.8, rely=0.0, relwidth=.08, relheight=.1)
+        historyButton.icon = historyIcon
+        parametersButton = tk.Button(self.parent, text='Paramètres', image=parametersIcon)
+        parametersButton.place(anchor='n', relx=0.8, rely=0.0, relwidth=.08, relheight=.1)
+        parametersButton.icon = parametersIcon
 
         # Side Menu
-        mapBackgroundButton = tk.Button(self.parent, text='Fond de carte', image=self.mapBackground)
+        mapBackgroundButton = tk.Button(self.parent, text='Fond de carte', image=mapBackgroundIcon)
         mapBackgroundButton.place(anchor='e', relx=1.0, rely=.3, relwidth=.08, relheight=.1)
-        trafficButton = tk.Button(self.parent, text='Traffic', image=self.traffic)
+        mapBackgroundButton.icon = mapBackgroundIcon
+        trafficButton = tk.Button(self.parent, text='Traffic', image=trafficIcon)
         trafficButton.place(anchor='e', relx=1.0, rely=.4, relwidth=.08, relheight=.1)
-        centerButton = tk.Button(self.parent, text='Centrer', image=self.center, command=self.mapFrame.canvas.centerOnPlane)
+        trafficButton.icon = trafficIcon
+        centerButton = tk.Button(self.parent, text='Centrer', image=centerIcon, command=self.mapFrame.canvas.centerOnPlane)
         centerButton.place(anchor='e', relx=1.0, rely=.5, relwidth=.08, relheight=.1)
-        northUpButton = tk.Button(self.parent, text='Nord en haut', image=self.northUp)
+        centerButton.icon = centerIcon
+        northUpButton = tk.Button(self.parent, text='Nord en haut', image=northUpIcon)
         northUpButton.place(anchor='e', relx=1.0, rely=.6, relwidth=.08, relheight=.1)
-        displayButton = tk.Button(self.parent, text='Affichages', image=self.display)
+        northUpButton.icon = northUpIcon
+        displayButton = tk.Button(self.parent, text='Affichages', image=displayIcon)
         displayButton.place(anchor='e', relx=1.0, rely=.7, relwidth=.08, relheight=.1)
+        displayButton.icon = displayIcon
 
 
 def loop():
