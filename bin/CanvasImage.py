@@ -4,9 +4,8 @@ import math
 import warnings
 import tkinter as tk
 
-from tkinter import CENTER, ttk
+from tkinter import ttk
 from PIL import Image, ImageTk
-from numpy import deprecate
 
 
 
