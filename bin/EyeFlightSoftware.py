@@ -10,8 +10,6 @@ appHeight = 600
 appOffsetX = 250
 appOffsetY = 100
 
-#test
-
 # Color setup
 darkGrayColor = '#1c1c1c' # Base button background
 grayColor = '#2e2e2e' # Active button background

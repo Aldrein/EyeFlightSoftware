@@ -71,7 +71,7 @@ class CanvasImage:
         self.container = self.canvas.create_rectangle((0, 0, self.imwidth, self.imheight), width=0)
         self.__show_image()  # show image on the canvas
         self.canvas.focus_set()  # set focus on the canvas
-
+        # Plane initializing
         self.planeImg = Image.open(self.planePath)
         self.planeX = 0
         self.planeY = 0
