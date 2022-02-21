@@ -6,7 +6,7 @@ import threading
  
 gpsd = None #seting the global variable
  
-os.system('clear') #clear the terminal (optional)
+os.system('clear') #clear the terminal
  
 class GpsPoller(threading.Thread):
   def __init__(self):
