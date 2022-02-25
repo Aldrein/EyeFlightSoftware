@@ -1,5 +1,5 @@
 
-# TODO: Create class to handle GPS data retrieving and processing
+# DONE: Create class to handle GPS data retrieving and processing
 # TODO: - getData() -> string
 # TODO: - translateGPStoImage(string) -> (float x, float y)
 # TODO: - translateImagetoGPS(float x, float y) -> string
