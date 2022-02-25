@@ -145,6 +145,8 @@ class GpsPoller(threading.Thread):
     while gpsp.running:
       gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
+#---------------------------------------- Main ----------------------------------------
+
 def loop():
     """ Main program loop running alongside Tkinter mainloop """
     currentTime = datetime.datetime.now().strftime(timeFormat)
