@@ -1,10 +1,46 @@
+from cmath import pi, cos, sin
 import os
 from gps import *
 from time import *
 import time
 import threading
- 
-gpsd = None #seting the global variable
+
+import numpy as np
+
+points = [47.7191667,
+47.7605556,
+47.7916667,
+47.9750000,
+48.0019444,
+48.0322222,
+48.0536111,
+48.0569444, 
+48.0719444,
+48.4433333, 
+48.4472222,
+48.4633333,
+48.5375000,
+48.5447222,
+48.5877778,
+48.6008333,
+48.6608333,
+48.7497222,
+48.7544444, 
+48.9269444,
+49.1733333,
+49.2033333, 
+49.6508333]
+
+values = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
+
+x = 48.636391
+y = np.interp(x, points, values)
+
+#y = 7297 + (48.0322222 - 48.0719444) * 1/20 * (40000/(2*pi)) * sin(48.0719444)
+
+print("y = ", y)
+
+"""gpsd = None #seting the global variable
  
 os.system('clear') #clear the terminal
  
@@ -73,4 +109,4 @@ if __name__ == '__main__':
       #print ('track       ' , gpsd.fix.track)
       #print ('mode        ' , gpsd.fix.mode)
       #print
-      #print ('sats        ' , gpsd.satellites)
+      #print ('sats        ' , gpsd.satellites)"""
