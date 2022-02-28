@@ -59,19 +59,19 @@ Xpixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699
 
 Ypixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
 
-LatMStM = 48.332655 #48.541797 #48.187548 #48.636391
-LonMStM = -3.602486 #-1.088229 #-2.424753 #-1.510278
+Lat_point = 48.332655 #48.541797 #48.187548 #48.636391
+Lon_point = -3.602486 #-1.088229 #-2.424753 #-1.510278
 
 #XMStM = (LonMStM * cos(4.134855927) + LatMStM * sin(4.134855927)) * 1/20 * (40000/(2*pi))
 #YMStM = (LatMStM * cos(4.134855927) - LonMStM * sin(4.134855927)) * 1/20 * (40000/(2*pi))
 
-Yinconnu = np.interp(LatMStM, Latitudes, Ypixels) #* (cos(4.134855927 * pi/180) + sin(4.134855927* pi/180))
-Xinconnu = np.interp(LonMStM, Longitudes, Xpixels) #* (cos(4.134855927 * pi/180) + sin(4.134855927 * pi/180))
+Ypixels_point = np.interp(Lat_point, Latitudes, Ypixels) #* (cos(4.134855927 * pi/180) + sin(4.134855927* pi/180))
+Xpixels_point = np.interp(Lon_point, Longitudes, Xpixels) #* (cos(4.134855927 * pi/180) + sin(4.134855927 * pi/180))
 
 #y = 7297 + (48.0322222 - 48.0719444) * 1/20 * (40000/(2*pi)) * sin(48.0719444)
 
-print("XMStM =", Xinconnu)
-print("YMStM =", Yinconnu)
+print("Xinconnu =", Xpixels_point)
+print("Yinconnu =", Ypixels_point)
 
 """gpsd = None #seting the global variable
  
