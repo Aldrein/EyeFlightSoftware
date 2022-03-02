@@ -101,7 +101,7 @@ class GpsUtils(threading.Thread):
       unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
       return unknown_longPi, unknown_latPi
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
   gpsp = GpsUtils() # create the thread
   try:
     gpsp.start() # start it up
@@ -133,4 +133,4 @@ if __name__ == '__main__':
     print ("\nKilling Thread...")
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
-  print ("Done.\nExiting.")
+  print ("Done.\nExiting.")"""

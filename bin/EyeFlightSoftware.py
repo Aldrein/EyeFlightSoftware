@@ -3,8 +3,9 @@ import time
 import tkinter as tk
 from tkinter import font
 from pathlib import Path
+import os
 import CanvasImage as cvImg
-import GpsUtils as GU
+import GPSUtils as GU
 
 # Window size and position variables
 appWidth = 1024
@@ -115,11 +116,28 @@ class EyeFlight(tk.Frame):
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
 
 def loop():
-    """ Main program loop running alongside Tkinter mainloop """
-    currentTime = datetime.datetime.now().strftime(timeFormat)
-    delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
-    win.title(f'EyeFlightSoftware {delta}')
-    win.after(1, loop) # loops the function
+  """ Main program loop running alongside Tkinter mainloop """
+  currentTime = datetime.datetime.now().strftime(timeFormat)
+  delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
+  win.title(f'EyeFlightSoftware {delta}')
+  gpsp = GU() # create the thread
+  try:
+    gpsp.start() # start it up
+    while True:
+      #It may take a second or two to get good data
+      #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
+      os.system('clear')
+      LongP, LatP = gpsp.interpolation(gpsp.transformation(gpsp.gpsp.gpsd.fix.latitude,gpsp.gpsd.fix.longitude))
+      print(LongP, LatP)
+      time.sleep(5) #set to whatever
+
+  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
+    print ("\nKilling Thread...")
+    gpsp.running = False
+    gpsp.join() # wait for the thread to finish what it's doing
+  print ("Done.\nExiting.")
+
+  win.after(1, loop) # loops the function
 
 if __name__=='__main__':
   win = tk.Tk()
