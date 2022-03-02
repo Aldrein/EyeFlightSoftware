@@ -1,16 +1,10 @@
 import datetime
+import time
 import tkinter as tk
 from tkinter import font
 from pathlib import Path
 import CanvasImage as cvImg
-
-import os
-from gps import *
-from time import *
-import time
-import threading
-
-#---------------------------------------- Display Section ----------------------------------------
+import GpsUtils as GU
 
 # Window size and position variables
 appWidth = 1024
@@ -119,33 +113,6 @@ class EyeFlight(tk.Frame):
         longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
         altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[ALTITUDE]', font=dataFont)
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
-        
-#---------------------------------------- GPS Data Section ----------------------------------------
-
-gpsd = None #seting the global variable
- 
-os.system('clear') #clear the terminal
- 
-class GpsPoller(threading.Thread):
-  def __init__(self):
-    threading.Thread.__init__(self)
-    global gpsd #bring it in scope
-    gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
-    self._current_value = None
-    self._running = True #setting the thread running to true
-    self._latitude = None    #setting GPS data variables
-    self._longitude = None   #    |
-    self._altitude = None    #    |
-    self._bearing = None     #    |
-    self._speed = None       #    |
-    self._climb = None       #    |
-
-  def run(self):
-    global gpsd
-    while gpsp.running:
-      gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
-
-#---------------------------------------- Main ----------------------------------------
 
 def loop():
     """ Main program loop running alongside Tkinter mainloop """
@@ -165,26 +132,3 @@ if __name__=='__main__':
   startTime = datetime.datetime.now().strftime(timeFormat)
   win.after(200, loop)
   win.mainloop()
-
-  gpsp = GpsPoller() # create the thread
-  try:
-    gpsp.start() # start it up
-    while True:
-      #It may take a second or two to get good data
-      #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
-      #os.system('clear') #not working on Windows
-
-      gpsp._latitude = gpsd.fix.latitude
-      gpsp._longitude = gpsd.fix.longitude
-      gpsp._altitude = gpsd.fix.altitude
-      gpsp._bearing = gpsd.fix.track
-      gpsp._speed = gpsd.fix.speed
-      gpsp._climb = gpsd.fix.climb
- 
-      time.sleep(5) #set to whatever
- 
-  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
-    print ("\nKilling Thread...")
-    gpsp.running = False
-    gpsp.join() # wait for the thread to finish what it's doing
-  print ("Done.\nExiting.")
