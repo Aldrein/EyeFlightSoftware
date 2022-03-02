@@ -73,8 +73,8 @@ class GpsUtils(threading.Thread):
   longitudesRGF93 = None
   latitudesRGF93 = None
 
-  Longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
-  Latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
+  longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
+  latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
 
   def __init__(self):
     threading.Thread.__init__(self)
@@ -86,7 +86,7 @@ class GpsUtils(threading.Thread):
 
   def run(self):
     global gpsd
-    while gpsp.running:
+    while self.running:
       gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
   def transformation(latitudesWS84, longitudesWS84):
@@ -97,8 +97,8 @@ class GpsUtils(threading.Thread):
     return longitudesRGF93, latitudesRGF93
   
   def interpolation(self, longitudeRGF93, latitudeRGF93):
-      unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.Longitudespixels) 
-      unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.Latitudespixels)
+      unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
+      unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
       return unknown_longPi, unknown_latPi
 
 if __name__ == '__main__':
