@@ -1,9 +1,9 @@
 
 # DONE: Create class to handle GPS data retrieving and processing
 # TODO: - getData() -> string
-# TODO: - translateGPStoImage(string) -> (float x, float y)
+# DONE: - translateGPStoImage(string) -> (float x, float y)
 # TODO: - translateImagetoGPS(float x, float y) -> string
-# TODO: - calculate linear regression in __init__ to provide the translation matrix
+# DONE: - calculate linear regression in __init__ to provide the translation matrix
 # TODO: - getAlt() -> float
 # TODO: - getLat() -> float 
 # TODO: - getLong() -> float
@@ -110,6 +110,23 @@ if __name__ == '__main__':
       #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
  
       os.system('clear')
+      #print
+      #print (' GPS reading')
+      #print ('----------------------------------------')
+      #print ('latitude    ' , gpsd.fix.latitude)
+      #print ('longitude   ' , gpsd.fix.longitude)
+      #print ('time utc    ' , gpsd.utc,' + ', gpsd.fix.time)
+      #print ('altitude (m)' , gpsd.fix.altitude)
+      #print ('eps         ' , gpsd.fix.eps)
+      #print ('epx         ' , gpsd.fix.epx)
+      #print ('epv         ' , gpsd.fix.epv)
+      #print ('ept         ' , gpsd.fix.ept)
+      #print ('speed (m/s) ' , gpsd.fix.speed)
+      #print ('climb       ' , gpsd.fix.climb)
+      #print ('track       ' , gpsd.fix.track)
+      #print ('mode        ' , gpsd.fix.mode)
+      #print
+      #print ('sats        ' , gpsd.satellites)
       time.sleep(5) #set to whatever
 
   except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
