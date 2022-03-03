@@ -21,6 +21,11 @@ grayColor = '#2e2e2e' # Active button background
 projectPath = Path(__file__).parents[1].resolve()
 print(projectPath)
 
+# Plane coordinates
+LongP = 3500
+LatP = 3500
+Bearing = 0
+
 timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
 
 class MapWindow(tk.Frame):
@@ -32,7 +37,7 @@ class MapWindow(tk.Frame):
         self.master.columnconfigure(0, weight=1)
         self.canvas = cvImg.CanvasImage(self.master, path, planePath, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
-        self.canvas.drawPlane(3500, 3500, 0)
+        self.canvas.drawPlane(LongP, LatP, Bearing)
         self.canvas.grid(row=0, column=0)  # show widget
 
 class EyeFlight(tk.Frame):
