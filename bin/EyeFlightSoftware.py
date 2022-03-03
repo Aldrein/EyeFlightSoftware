@@ -127,7 +127,7 @@ def loop():
       #It may take a second or two to get good data
       #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
       os.system('clear')
-      LongP, LatP = gpsp.interpolation(gpsp.transformation(gpsp.gpsp.gpsd.fix.latitude,gpsp.gpsd.fix.longitude))
+      LongP, LatP = gpsp.interpolation(gpsp.conversionWS84toRGF93(gpsp.gpsp.gpsd.fix.latitude,gpsp.gpsd.fix.longitude))
       print(LongP, LatP)
       time.sleep(5) #set to whatever
 
