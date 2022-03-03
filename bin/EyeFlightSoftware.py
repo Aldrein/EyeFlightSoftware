@@ -22,9 +22,13 @@ projectPath = Path(__file__).parents[1].resolve()
 print(projectPath)
 
 # Plane coordinates
-longP = 3500
-latP = 3500
-bearing = 0
+longPixel, latPixel = GU.access()
+longWS84 = GU.gpsd.fix.longitude
+latWS84 = GU.gpsd.fix.latitude
+#longPixel = 3500
+#latPixel = 3500
+bearing = GU.gpsd.fix.track
+altitude = GU.gpsd.fix.altitude
 
 timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
 
@@ -37,7 +41,7 @@ class MapWindow(tk.Frame):
         self.master.columnconfigure(0, weight=1)
         self.canvas = cvImg.CanvasImage(self.master, path, planePath, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
-        self.canvas.drawPlane(longP, latP, bearing)
+        self.canvas.drawPlane(longPixel, latPixel, bearing)
         self.canvas.grid(row=0, column=0)  # show widget
 
 class EyeFlight(tk.Frame):
@@ -113,11 +117,11 @@ class EyeFlight(tk.Frame):
 
     def __dataPlacement(self):
         dataFont = font.Font(family='Ubuntu', size=18)
-        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[LATITUDE]', font=dataFont)
+        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=latWS84, font=dataFont)
         latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
-        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[LONGITUDE]', font=dataFont)
+        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=longWS84, font=dataFont)
         longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
-        altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text='[ALTITUDE]', font=dataFont)
+        altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
 
 def loop():
@@ -125,7 +129,6 @@ def loop():
   currentTime = datetime.datetime.now().strftime(timeFormat)
   delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
   win.title(f'EyeFlightSoftware {delta}')
-
   win.after(1, loop) # loops the function
 
 if __name__=='__main__':
@@ -138,23 +141,24 @@ if __name__=='__main__':
   EyeFlight(win).pack(side='top', fill='both', expand=True)
   startTime = datetime.datetime.now().strftime(timeFormat)
 
-  gpsp = GU.GpsUtils() # create the thread
+  """gpsp = GU.GpsUtils() # create the thread
   try:
     gpsp.start() # start it up
     while True:
       #It may take a second or two to get good data
       #print GU.gpsd.fix.latitude,', ',GU.gpsd.fix.longitude,'  Time: ',gpsd.utc
       os.system('clear')
+      print("LongWS84 = ", GU.gpsd.fix.longitude, " ; LatWS84 = ", GU.gpsd.fix.latitude)
       long93, lat93 = gpsp.conversionWS84toRGF93(GU.gpsd.fix.longitude, GU.gpsd.fix.latitude)
       longP, latP = gpsp.interpolation(long93, lat93)
-      print(longP, latP)
+      print("longP = ", longP, "latP = ", latP)
       time.sleep(5) #set to whatever
 
   except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
     print ("\nKilling Thread...")
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
-  print ("Done.\nExiting.")
+  print ("Done.\nExiting.")"""
 
   win.after(200, loop)
   win.mainloop()

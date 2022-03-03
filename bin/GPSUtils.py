@@ -11,7 +11,7 @@
 from cmath import pi, sin, cos, sqrt, log, tan, exp
 import os
 from gps import *
-from time import *
+import time
 import threading
 
 import numpy as np
@@ -20,7 +20,7 @@ import numpy as np
 gpsd = None #seting the global variable
 
 os.system('clear') #clear the terminal
- 
+
 class GpsUtils(threading.Thread):
   
   longitudesWS84 = [-2.7233336,
@@ -95,7 +95,7 @@ class GpsUtils(threading.Thread):
     #self.longitudesRGF93, self.latitudesRGF93 = self.conversionWS84toRGF93(self.longitudesWS84, self.latitudesWS84)
 
   """def run(self):
-    #global gpsd
+    global gpsd
     while self.running:
       gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer"""
 
@@ -105,7 +105,7 @@ class GpsUtils(threading.Thread):
     outProj = Proj(crs)
     longitudesRGF93, latitudesRGF93 = transform(inProj, outProj, latitudesWS84, longitudesWS84)
     return longitudesRGF93, latitudesRGF93"""
-  
+
   def deg2rad(self, angle):
     return angle * pi/180
 
@@ -116,18 +116,18 @@ class GpsUtils(threading.Thread):
     phi1 = self.deg2rad(44)      # 1er parallele automécoïque
     phi2 = self.deg2rad(49)      # 2eme parallele automécoïque
 
-    phi = self.deg2rad(int(latitudeWS84))
-    l = self.deg2rad(int(longitudeWS84))
+    phi = self.deg2rad(float(latitudeWS84))
+    l = self.deg2rad(float(longitudeWS84))
 
     #calcul des grandes normales
     gN1 = self.a / sqrt(1 - self.e * self.e * sin(phi1) * sin(phi1))
     gN2 = self.a / sqrt(1 - self.e * self.e * sin(phi2) * sin(phi2))
 
     #calculs des latitudes isométriques
-    gl1 = log(tan(pi / 4 + phi1 / 2) * ((1 - self.e * sin(phi1)) / (1 + self.e * sin(phi1)) ** (self.e / 2)))
-    gl2 = log(tan(pi / 4 + phi2 / 2) * ((1 - self.e * sin(phi2)) / (1 + self.e * sin(phi2)) ** (self.e / 2)))
-    gl0 = log(tan(pi / 4 + phi0 / 2) * ((1 - self.e * sin(phi0)) / (1 + self.e * sin(phi0)) ** (self.e / 2)))
-    gl = log(tan(pi / 4 + phi / 2) * ((1 - self.e * sin(phi)) / (1 + self.e * sin(phi)) ** (self.e / 2)))
+    gl1 = log(tan(pi / 4 + phi1 / 2) * ((1 - self.e * sin(phi1)) / (1 + self.e * sin(phi1))) ** (self.e / 2))
+    gl2 = log(tan(pi / 4 + phi2 / 2) * ((1 - self.e * sin(phi2)) / (1 + self.e * sin(phi2))) ** (self.e / 2))
+    gl0 = log(tan(pi / 4 + phi0 / 2) * ((1 - self.e * sin(phi0)) / (1 + self.e * sin(phi0))) ** (self.e / 2))
+    gl = log(tan(pi / 4 + phi / 2) * ((1 - self.e * sin(phi)) / (1 + self.e * sin(phi))) ** (self.e / 2))
 
     #calcul de l'exposant de la projection
     n = (log((gN2 * cos(phi2)) / (gN1 * cos(phi1)))) / (gl1 - gl2)
@@ -143,9 +143,31 @@ class GpsUtils(threading.Thread):
     return unknonwnRGF93_long.real, unknonwnRGF93_lat.real
 
   def interpolation(self, longitudeRGF93, latitudeRGF93):
+      print("longitudeRGF93 = ", longitudeRGF93, "latitudeRGF93 = ", latitudeRGF93)
       unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
       unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
       return unknown_longPi, unknown_latPi
+
+def access():
+  gpsp = GpsUtils() # create the thread
+  try:
+    gpsp.start() # start it up
+    while True:
+      #It may take a second or two to get good data
+      #print GU.gpsd.fix.latitude,', ',GU.gpsd.fix.longitude,'  Time: ',gpsd.utc
+      os.system('clear')
+      print("LongWS84 = ", gpsd.fix.longitude, " ; LatWS84 = ", gpsd.fix.latitude)
+      long93, lat93 = gpsp.conversionWS84toRGF93(gpsd.fix.longitude, gpsd.fix.latitude)
+      longP, latP = gpsp.interpolation(long93, lat93)
+      print("longP = ", longP, "latP = ", latP)
+      time.sleep(5) #set to whatever
+      return longP, latP
+
+  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
+    print ("\nKilling Thread...")
+    gpsp.running = False
+    gpsp.join() # wait for the thread to finish what it's doing
+  print ("Done.\nExiting.")
 
 """if __name__ == '__main__':
   gpsp = GpsUtils() # create the thread
