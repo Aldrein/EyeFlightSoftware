@@ -22,9 +22,9 @@ projectPath = Path(__file__).parents[1].resolve()
 print(projectPath)
 
 # Plane coordinates
-LongP = 3500
-LatP = 3500
-Bearing = 0
+longP = 3500
+latP = 3500
+bearing = 0
 
 timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
 
@@ -37,7 +37,7 @@ class MapWindow(tk.Frame):
         self.master.columnconfigure(0, weight=1)
         self.canvas = cvImg.CanvasImage(self.master, path, planePath, appWidth, appHeight)  # create widget
         self.canvas.movecenter()
-        self.canvas.drawPlane(LongP, LatP, Bearing)
+        self.canvas.drawPlane(longP, latP, bearing)
         self.canvas.grid(row=0, column=0)  # show widget
 
 class EyeFlight(tk.Frame):
@@ -125,22 +125,6 @@ def loop():
   currentTime = datetime.datetime.now().strftime(timeFormat)
   delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
   win.title(f'EyeFlightSoftware {delta}')
-  gpsp = GU() # create the thread
-  try:
-    gpsp.start() # start it up
-    while True:
-      #It may take a second or two to get good data
-      #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
-      os.system('clear')
-      LongP, LatP = gpsp.interpolation(gpsp.conversionWS84toRGF93(gpsp.gpsd.fix.latitude,gpsp.gpsd.fix.longitude))
-      print(LongP, LatP)
-      time.sleep(5) #set to whatever
-
-  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
-    print ("\nKilling Thread...")
-    gpsp.running = False
-    gpsp.join() # wait for the thread to finish what it's doing
-  print ("Done.\nExiting.")
 
   win.after(1, loop) # loops the function
 
@@ -153,5 +137,24 @@ if __name__=='__main__':
   #win.wm_attributes('-fullscreen', 'True') #fullscreen
   EyeFlight(win).pack(side='top', fill='both', expand=True)
   startTime = datetime.datetime.now().strftime(timeFormat)
+
+  gpsp = GU.GpsUtils() # create the thread
+  try:
+    gpsp.start() # start it up
+    while True:
+      #It may take a second or two to get good data
+      #print GU.gpsd.fix.latitude,', ',GU.gpsd.fix.longitude,'  Time: ',gpsd.utc
+      os.system('clear')
+      long93, lat93 = gpsp.conversionWS84toRGF93(GU.gpsd.fix.longitude, GU.gpsd.fix.latitude)
+      longP, latP = gpsp.interpolation(long93, lat93)
+      print(longP, latP)
+      time.sleep(5) #set to whatever
+
+  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
+    print ("\nKilling Thread...")
+    gpsp.running = False
+    gpsp.join() # wait for the thread to finish what it's doing
+  print ("Done.\nExiting.")
+
   win.after(200, loop)
   win.mainloop()
