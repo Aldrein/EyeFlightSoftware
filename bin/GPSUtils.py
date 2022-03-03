@@ -10,10 +10,8 @@
 
 from cmath import pi, sin, cos, sqrt, log, tan, exp
 import os
-from pickle import PickleError
 from gps import *
 from time import *
-import time
 import threading
 
 import numpy as np
