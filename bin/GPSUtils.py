@@ -28,9 +28,9 @@ class GpsUtils():
   #longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
   #latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
 
-  pointsWS84 = [[]]
-  pointsRGF93 = [[]]
-  pointsPixels = [[]]
+  pointsWS84 = [[None for _ in range(2)]] #for _ in range(len(latitudesWS84))]
+  pointsRGF93 = [[None for _ in range(2)]] #for _ in range(len(latitudesRGF93))]
+  pointsPixels = [[None for _ in range(2)]] #for _ in range(len(latitudespixels))]
 
   a = 6378137       #demi-grand axe de l'éllipsoïde (m)
   e = 0.08181919106 #première exentricité à l'origine
@@ -46,10 +46,11 @@ class GpsUtils():
       longRGF93, latRGF93 = self.conversionWS84toRGF93(self.longitudesWS84[i], self.latitudesWS84[i])
       self.longitudesRGF93.append(longRGF93)
       self.latitudesRGF93.append(latRGF93)
-      self.pointsRGF93[i].append(longRGF93, latRGF93)
+      self.pointsRGF93.append([longRGF93, latRGF93])
+      #self.pointsRGF93[i][2] = latRGF93
     
     for i in range(len(self.longitudespixels)):
-      self.pointsPixels[i].append(self.longitudespixels[i], self.latitudespixels[i])
+      self.pointsPixels.append([self.longitudespixels[i], self.latitudespixels[i]])
 
     print("LenghtWS84 = ", len(self.longitudesWS84)," ; LenghtRGF = ", len(self.longitudesRGF93), " ; LenghtPixel = ", len(self.longitudespixels))
 
