@@ -1,9 +1,7 @@
 import datetime
-import time
 import tkinter as tk
 from tkinter import font
 from pathlib import Path
-import os
 import CanvasImage as cvImg
 import GPSUtils as GU
 
@@ -22,13 +20,13 @@ projectPath = Path(__file__).parents[1].resolve()
 print(projectPath)
 
 # Plane coordinates
-longPixel, latPixel = GU.access()
-longWS84 = GU.gpsd.fix.longitude
-latWS84 = GU.gpsd.fix.latitude
+gps = GU.GpsUtils()
+longWS84, latWS84, longPixel, latPixel = gps.access()
 #longPixel = 3500
 #latPixel = 3500
-bearing = GU.gpsd.fix.track
-altitude = GU.gpsd.fix.altitude
+bearing = 0
+altitude = 0
+
 
 timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
 
@@ -140,25 +138,6 @@ if __name__=='__main__':
   #win.wm_attributes('-fullscreen', 'True') #fullscreen
   EyeFlight(win).pack(side='top', fill='both', expand=True)
   startTime = datetime.datetime.now().strftime(timeFormat)
-
-  """gpsp = GU.GpsUtils() # create the thread
-  try:
-    gpsp.start() # start it up
-    while True:
-      #It may take a second or two to get good data
-      #print GU.gpsd.fix.latitude,', ',GU.gpsd.fix.longitude,'  Time: ',gpsd.utc
-      os.system('clear')
-      print("LongWS84 = ", GU.gpsd.fix.longitude, " ; LatWS84 = ", GU.gpsd.fix.latitude)
-      long93, lat93 = gpsp.conversionWS84toRGF93(GU.gpsd.fix.longitude, GU.gpsd.fix.latitude)
-      longP, latP = gpsp.interpolation(long93, lat93)
-      print("longP = ", longP, "latP = ", latP)
-      time.sleep(5) #set to whatever
-
-  except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
-    print ("\nKilling Thread...")
-    gpsp.running = False
-    gpsp.join() # wait for the thread to finish what it's doing
-  print ("Done.\nExiting.")"""
 
   win.after(200, loop)
   win.mainloop()
