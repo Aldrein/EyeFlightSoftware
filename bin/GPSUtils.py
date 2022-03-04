@@ -12,7 +12,6 @@ from cmath import pi, sin, cos, sqrt, log, tan, exp
 import gpsd
 
 import numpy as np
-from scipy import interpolate
 
 class GpsUtils():
 
@@ -29,6 +28,10 @@ class GpsUtils():
   #longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
   #latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
 
+  pointsWS84 = [[]]
+  pointsRGF93 = [[]]
+  pointsPixels = [[]]
+
   a = 6378137       #demi-grand axe de l'éllipsoïde (m)
   e = 0.08181919106 #première exentricité à l'origine
   x0 = 700000       #coordonnées à l'origine
@@ -43,6 +46,10 @@ class GpsUtils():
       longRGF93, latRGF93 = self.conversionWS84toRGF93(self.longitudesWS84[i], self.latitudesWS84[i])
       self.longitudesRGF93.append(longRGF93)
       self.latitudesRGF93.append(latRGF93)
+      self.pointsRGF93[i].append(longRGF93, latRGF93)
+    
+    for i in range(len(self.longitudespixels)):
+      self.pointsPixels[i].append(self.longitudespixels[i], self.latitudespixels[i])
 
     print("LenghtWS84 = ", len(self.longitudesWS84)," ; LenghtRGF = ", len(self.longitudesRGF93), " ; LenghtPixel = ", len(self.longitudespixels))
 
@@ -99,11 +106,11 @@ class GpsUtils():
 
   def interpolation(self, longitudeRGF93, latitudeRGF93):
       print("longitudeRGF93 = ", longitudeRGF93, "latitudeRGF93 = ", latitudeRGF93)
-      #coordonnesRGF93 = [longitudeRGF93, latitudeRGF93]
-      unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
-      unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
-      #unknown_coordinates = interpolate.interp2d(self.longitudesRGF93, self.latitudesRGF93, coordonnesRGF93)
-      #unknown_longPi = unknown_coordinates[1]
-      #unknown_latPi = unknown_coordinates[2]
+      coordonnesRGF93 = [longitudeRGF93, latitudeRGF93]
+      #unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
+      #unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
+      unknown_coordinates = np.interp(coordonnesRGF93, self.pointsRGF93, self.pointsPixels)
+      unknown_longPi = unknown_coordinates[1]
+      unknown_latPi = unknown_coordinates[2]
       print("lonPi = ", unknown_longPi, " ; latPi = ", unknown_latPi)
       return unknown_longPi, unknown_latPi
