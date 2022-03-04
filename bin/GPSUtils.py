@@ -12,6 +12,7 @@ from cmath import pi, sin, cos, sqrt, log, tan, exp
 import gpsd
 
 import numpy as np
+from scipy import interpolate
 
 class GpsUtils():
 
@@ -23,7 +24,7 @@ class GpsUtils():
   longitudesRGF93 = []
   latitudesRGF93 = []
 
-  longitudespixels = [7677, 7627, 7578, 7529, 7480, 7430, 7381, 6974, 6917, 6861, 6805, 6748, 6692, 6635, 6272, 6208, 6145, 6082, 6018, 5955, 5891, 5570, 5499, 5429, 5358, 5288, 5217, 5147, 4868, 4790, 4712, 4635, 4557, 4480, 4403, 4166, 4081, 3996, 3912, 3828, 3743, 3659, 3465, 3373, 3821, 3190, 3099, 3007, 2916, 2566, 2468, 2369, 2271, 2172, 7204, 1852, 1746, 1641, 1535, 1430, 1138, 1025, 912, 800, 688]
+  longitudespixels = [7677, 7627, 7578, 7529, 7480, 7430, 7381, 6974, 6917, 6861, 6805, 6748, 6692, 6635, 6272, 6208, 6145, 6082, 6018, 5955, 5891, 5570, 5499, 5429, 5358, 5288, 5217, 5147, 4868, 4790, 4712, 4635, 4557, 4480, 4403, 4166, 4081, 3996, 3912, 3828, 3743, 3659, 3465, 3373, 3821, 3190, 3099, 3007, 2916, 2566, 2468, 2369, 2271, 2172, 1852, 1746, 1641, 1535, 1430, 1138, 1025, 912, 800, 688]
   latitudespixels = [880, 1994, 3106, 4218, 5330, 6441, 7551, 847, 1960, 3073, 4184, 5295, 6405, 7515, 810, 1922, 3034, 4145, 5255, 6366, 7475, 767, 1880, 2990, 4102, 5212, 6321, 7430, 720, 1832, 2943, 4053, 5163, 6272, 7381, 669, 1780, 2891, 4001, 5110, 6218, 7327, 613, 1724, 2834, 3943, 5052, 6160, 7267, 2773, 3881, 4989, 6097, 7204, 2707, 3815, 4922, 6029, 7135, 2637, 3744, 4851, 5957, 7062]
   #longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
   #latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
@@ -42,6 +43,8 @@ class GpsUtils():
       longRGF93, latRGF93 = self.conversionWS84toRGF93(self.longitudesWS84[i], self.latitudesWS84[i])
       self.longitudesRGF93.append(longRGF93)
       self.latitudesRGF93.append(latRGF93)
+
+    print("LenghtWS84 = ", len(self.longitudesWS84)," ; LenghtRGF = ", len(self.longitudesRGF93), " ; LenghtPixel = ", len(self.longitudespixels))
 
     while True:
       latWS84, lonWS84 = gpsd.get_current().position()
@@ -96,6 +99,11 @@ class GpsUtils():
 
   def interpolation(self, longitudeRGF93, latitudeRGF93):
       print("longitudeRGF93 = ", longitudeRGF93, "latitudeRGF93 = ", latitudeRGF93)
+      #coordonnesRGF93 = [longitudeRGF93, latitudeRGF93]
       unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
       unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
+      #unknown_coordinates = interpolate.interp2d(self.longitudesRGF93, self.latitudesRGF93, coordonnesRGF93)
+      #unknown_longPi = unknown_coordinates[1]
+      #unknown_latPi = unknown_coordinates[2]
+      print("lonPi = ", unknown_longPi, " ; latPi = ", unknown_latPi)
       return unknown_longPi, unknown_latPi
