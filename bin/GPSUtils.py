@@ -43,10 +43,11 @@ class GpsUtils():
       longRGF93, latRGF93 = self.conversionWS84toRGF93(self.longitudesWS84[i], self.latitudesWS84[i])
       self.longitudesRGF93.append(longRGF93)
       self.latitudesRGF93.append(latRGF93)
-      self.pointsRGF93[i].append(longRGF93, latRGF93)
+      #self.pointsRGF93.append([longRGF93, latRGF93])
+      #self.pointsRGF93[i][2] = latRGF93
     
-    for i in range(len(self.longitudespixels)):
-      self.pointsPixels[i].append(self.longitudespixels[i], self.latitudespixels[i])
+    #for i in range(len(self.longitudespixels)):
+      #self.pointsPixels.append([self.longitudespixels[i], self.latitudespixels[i]])
 
     print("LenghtWS84 = ", len(self.longitudesWS84)," ; LenghtRGF = ", len(self.longitudesRGF93), " ; LenghtPixel = ", len(self.longitudespixels))
 
