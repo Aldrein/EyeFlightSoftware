@@ -113,21 +113,21 @@ class GpsUtils():
       #  if self.latitudesRGF93[j] not in new_LatRGF93:
       #    new_LatRGF93.append(self.latitudesRGF93[j])
       
-      indexLong = (np.abs(self.longitudesRGF93-longitudeRGF93)).argmin()
-      indexLat = (np.abs(self.latitudesRGF93-latitudeRGF93)).argmin()
+      indexLong = (np.abs(np.asarray(self.longitudesRGF93)-longitudeRGF93)).argmin()
+      indexLat = (np.abs(np.asarray(self.latitudesRGF93)-latitudeRGF93)).argmin()
 
       longProch = self.longitudesRGF93[indexLong]
       latProch = self.latitudesRGF93[indexLat]
 
       if longitudeRGF93 <= longProch:
-        unknown_longPi = self.longitudespixels[indexLong] + (abs(longitudeRGF93 - longProch))/self.echelle
+        unknown_longPi = self.longitudespixels[indexLong] - (np.abs(longitudeRGF93 - longProch))/50
       else:
-        unknown_longPi = self.longitudespixels[indexLong] - (abs(longitudeRGF93 - longProch))/self.echelle
+        unknown_longPi = self.longitudespixels[indexLong] + (np.abs(longitudeRGF93 - longProch))/50
 
-      if longitudeRGF93 <= longProch:
-        unknown_latPi = self.latitudespixels[indexLat] + (abs(latitudeRGF93 - latProch))/self.echelle
+      if latitudeRGF93 <= longProch:
+        unknown_latPi = self.latitudespixels[indexLat] + (np.abs(latitudeRGF93 - latProch))/self.echelle
       else:
-        unknown_latPi = self.latitudespixels[indexLat] - (abs(latitudeRGF93 - latProch))/self.echelle
+        unknown_latPi = self.latitudespixels[indexLat] - (np.abs(latitudeRGF93 - latProch))/self.echelle
 
       #unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
       #unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
