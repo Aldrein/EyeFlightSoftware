@@ -28,14 +28,11 @@ class GpsUtils():
   #longitudespixels = [4025, 2961, 5650, 1919, 4584, 7023, 2682, 3782, 5555, 5057, 1639, 699, 3961, 7604, 5112, 2561, 6114, 7317, 3095, 7993, 7570, 6038, 6136]
   #latitudespixels = [7979, 7806, 7925, 7237, 7390, 7463, 7129, 7209, 7297, 6437, 6156, 6030, 6152, 6350, 6120, 5898, 6017, 5880, 5601, 5516, 4949, 4804, 3812]
 
-  pointsWS84 = [[]]
-  pointsRGF93 = [[]]
-  pointsPixels = [[]]
-
   a = 6378137       #demi-grand axe de l'éllipsoïde (m)
   e = 0.08181919106 #première exentricité à l'origine
   x0 = 700000       #coordonnées à l'origine
   y0 = 6600000      #coordonnées à l'origine
+  echelle = 50      #mètres/pixel
 
   def access(self):
     gpsd.connect()
@@ -106,11 +103,32 @@ class GpsUtils():
 
   def interpolation(self, longitudeRGF93, latitudeRGF93):
       print("longitudeRGF93 = ", longitudeRGF93, "latitudeRGF93 = ", latitudeRGF93)
-      coordonnesRGF93 = [longitudeRGF93, latitudeRGF93]
+      #new_LongRGF93 = []
+      #new_LatRGF93 = []
+      #for i in self.longitudesRGF93:
+      #  if self.longitudesRGF93[i] not in new_LongRGF93:
+      #    new_LongRGF93.append(self.longitudesRGF93[i])
+      #for j in self.longitudesRGF93:
+      #  if self.latitudesRGF93[j] not in new_LatRGF93:
+      #    new_LatRGF93.append(self.latitudesRGF93[j])
+      
+      indexLong = (np.abs(self.longitudesRGF93-longitudeRGF93)).argmin()
+      indexLat = (np.abs(self.latitudesRGF93-latitudeRGF93)).argmin()
+
+      longProch = self.longitudesRGF93[indexLong]
+      latProch = self.latitudesRGF93[indexLat]
+
+      if longitudeRGF93 <= longProch:
+        unknown_longPi = self.longitudespixels[indexLong] + (abs(longitudeRGF93 - longProch))/self.echelle
+      else:
+        unknown_longPi = self.longitudespixels[indexLong] - (abs(longitudeRGF93 - longProch))/self.echelle
+
+      if longitudeRGF93 <= longProch:
+        unknown_latPi = self.latitudespixels[indexLat] + (abs(latitudeRGF93 - latProch))/self.echelle
+      else:
+        unknown_latPi = self.latitudespixels[indexLat] - (abs(latitudeRGF93 - latProch))/self.echelle
+
       #unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
       #unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
-      unknown_coordinates = np.interp(coordonnesRGF93, self.pointsRGF93, self.pointsPixels)
-      unknown_longPi = unknown_coordinates[1]
-      unknown_latPi = unknown_coordinates[2]
       print("lonPi = ", unknown_longPi, " ; latPi = ", unknown_latPi)
       return unknown_longPi, unknown_latPi
