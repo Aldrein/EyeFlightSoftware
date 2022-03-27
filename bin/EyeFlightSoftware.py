@@ -121,12 +121,26 @@ class EyeFlight(tk.Frame):
         longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
         altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
+        
+    def movePlane(self, x, y):
+        self.mapFrame.canvas.drawPlane(x, y, 0) #! Change angle accordingly
 
 def loop():
   """ Main program loop running alongside Tkinter mainloop """
   currentTime = datetime.datetime.now().strftime(timeFormat)
   delta = datetime.datetime.strptime(currentTime, timeFormat) - datetime.datetime.strptime(startTime, timeFormat)
   win.title(f'EyeFlightSoftware {delta}')
+  
+  #! CODE BEING LOOPED BELOW
+  
+  #? Ici tu peux appeler la fonction pour récupérer les coordonnées GPS puis les transformer en coordonnées image
+  #? Après tu peux appeler win.children.get('!eyeflight').movePlane(x,y)
+  #? à tester je sais pas si ça récupère l'instance de la classe ou juste la classe elle même
+  #? Il faut trouver un moyen d'avoir l'instance pour après appeler movePlane(x, y) qui délègue ensuite au canvas et affiche l'avion
+  #? Vu que j'ai pas GPSD je peux pas tester correctement mais tu me diras si tu trouves un moyen
+  
+  #! CODE BEING LOOPED ABOVE
+  
   win.after(1, loop) # loops the function
 
 if __name__=='__main__':
@@ -138,6 +152,6 @@ if __name__=='__main__':
   #win.wm_attributes('-fullscreen', 'True') #fullscreen
   EyeFlight(win).pack(side='top', fill='both', expand=True)
   startTime = datetime.datetime.now().strftime(timeFormat)
-
+  print(win.children)
   win.after(200, loop)
   win.mainloop()
