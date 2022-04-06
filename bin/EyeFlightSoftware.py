@@ -21,9 +21,9 @@ print(projectPath)
 
 # Plane coordinates
 gps = GU.GpsUtils()
-longWS84, latWS84, longPixel, latPixel = gps.access()
-#longPixel = 3500
-#latPixel = 3500
+#longWS84, latWS84, longPixel, latPixel = gps.access()
+longPixel = 3500
+latPixel = 3500
 bearing = 0
 altitude = 0
 
@@ -115,9 +115,9 @@ class EyeFlight(tk.Frame):
 
     def __dataPlacement(self):
         dataFont = font.Font(family='Ubuntu', size=18)
-        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=latWS84, font=dataFont)
+        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', font=dataFont)
         latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
-        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=longWS84, font=dataFont)
+        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', font=dataFont)
         longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
         altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
@@ -133,6 +133,8 @@ def loop():
   
   #! CODE BEING LOOPED BELOW
   
+  longWS84, latWS84, longPixel, latPixel = gps.access()
+  win.children.get('!eyeflight').movePlane(longPixel, latPixel)
   #? Ici tu peux appeler la fonction pour récupérer les coordonnées GPS puis les transformer en coordonnées image
   #? Après tu peux appeler win.children.get('!eyeflight').movePlane(x,y)
   #? à tester je sais pas si ça récupère l'instance de la classe ou juste la classe elle même
