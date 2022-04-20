@@ -34,37 +34,45 @@ class GpsUtils():
   y0 = 6600000      #coordonnées à l'origine
   echelle = 50      #mètres/pixel
 
-  def access(self):
-    gpsd.connect()
-    packet = gpsd.get_current()
-    print(packet.position())
-
+  def init(self):
+    while True:
+      gpsd.connect()
+      packet = gpsd.get_current()
+      if packet.mode < 2:
+        break
+    
     for i in range(len(self.longitudesWS84)):
       longRGF93, latRGF93 = self.conversionWS84toRGF93(self.longitudesWS84[i], self.latitudesWS84[i])
       self.longitudesRGF93.append(longRGF93)
       self.latitudesRGF93.append(latRGF93)
-      #self.pointsRGF93.append([longRGF93, latRGF93])
-      #self.pointsRGF93[i][2] = latRGF93
-    
-    #for i in range(len(self.longitudespixels)):
-      #self.pointsPixels.append([self.longitudespixels[i], self.latitudespixels[i]])
 
     print("LenghtWS84 = ", len(self.longitudesWS84)," ; LenghtRGF = ", len(self.longitudesRGF93), " ; LenghtPixel = ", len(self.longitudespixels))
 
-    while True:
-      latWS84, lonWS84 = gpsd.get_current().position()
-      print("Latitude : ", latWS84, "Longitude : ", lonWS84)
+  def access(self):
+    gpsd.connect()
+    packet = gpsd.get_current()
+    if packet.mode >= 2:
+      latWS84 = packet.lat
+      lonWS84 = packet.lon
+      bearing = packet.track
+      altitude = "NA"
+      if packet.mode >=3:
+        altitude = packet.alt
+    else:
+      latWS84 = "NA"
+      lonWS84 = "NA"
+      bearing = "NA"
+      altitude = "NA"
+
+    print("Latitude : ", latWS84, " - Longitude : ", lonWS84)
+    print("Bearing : ", bearing, " - Altitude : ", altitude)
+    if isinstance(lonWS84, float) & isinstance(latWS84, float):
       lonRGF93, latRGF93 = GpsUtils().conversionWS84toRGF93(lonWS84, latWS84)
       lonP, latP = GpsUtils().interpolation(lonRGF93, latRGF93)
-      return lonWS84, latWS84, lonP, latP
-    #self.longitudesRGF93, self.latitudesRGF93 = self.conversionWS84toRGF93(self.longitudesWS84, self.latitudesWS84)
-
-  """def transformation(latitudesWS84, longitudesWS84):
-    crs = CRS.from_proj4("+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs ")
-    inProj = Proj('epsg:4326')
-    outProj = Proj(crs)
-    longitudesRGF93, latitudesRGF93 = transform(inProj, outProj, latitudesWS84, longitudesWS84)
-    return longitudesRGF93, latitudesRGF93"""
+    else:
+      lonP = "NA"
+      latP = "NA"
+    return lonWS84, latWS84, lonP, latP, bearing, altitude
 
   def deg2rad(self, angle):
     return angle * pi/180
@@ -104,14 +112,6 @@ class GpsUtils():
 
   def interpolation(self, longitudeRGF93, latitudeRGF93):
       print("longitudeRGF93 = ", longitudeRGF93, "latitudeRGF93 = ", latitudeRGF93)
-      #new_LongRGF93 = []
-      #new_LatRGF93 = []
-      #for i in self.longitudesRGF93:
-      #  if self.longitudesRGF93[i] not in new_LongRGF93:
-      #    new_LongRGF93.append(self.longitudesRGF93[i])
-      #for j in self.longitudesRGF93:
-      #  if self.latitudesRGF93[j] not in new_LatRGF93:
-      #    new_LatRGF93.append(self.latitudesRGF93[j])
       
       indexLong = (np.abs(np.asarray(self.longitudesRGF93)-longitudeRGF93)).argmin()
       indexLat = (np.abs(np.asarray(self.latitudesRGF93)-latitudeRGF93)).argmin()
@@ -129,7 +129,5 @@ class GpsUtils():
       else:
         unknown_latPi = self.latitudespixels[indexLat] - (np.abs(latitudeRGF93 - latProch))/self.echelle
 
-      #unknown_longPi = np.interp(longitudeRGF93, self.longitudesRGF93, self.longitudespixels) 
-      #unknown_latPi = np.interp(latitudeRGF93, self.latitudesRGF93, self.latitudespixels)
       print("lonPi = ", unknown_longPi, " ; latPi = ", unknown_latPi)
       return unknown_longPi, unknown_latPi

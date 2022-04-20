@@ -21,14 +21,17 @@ print(projectPath)
 
 # Plane coordinates
 gps = GU.GpsUtils()
-#longWS84, latWS84, longPixel, latPixel = gps.access()
+gps.init()
+# longWS84, latWS84, longPixel, latPixel = gps.access()
+latWS84 = 0
+longWS84 = 0
 longPixel = 3500
 latPixel = 3500
 bearing = 0
 altitude = 0
 
 
-timeFormat = '%Y-%m-%d-%H:%M:%S:%f'
+timeFormat = '%Y-%m-%d-%H:%M:%S'
 
 class MapWindow(tk.Frame):
     """ Main window class """
@@ -115,15 +118,20 @@ class EyeFlight(tk.Frame):
 
     def __dataPlacement(self):
         dataFont = font.Font(family='Ubuntu', size=18)
-        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', font=dataFont)
+        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=latWS84, font=dataFont)
         latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
-        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', font=dataFont)
+        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=longWS84, font=dataFont)
         longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
         altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
         altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
         
-    def movePlane(self, x, y):
-        self.mapFrame.canvas.drawPlane(x, y, 0) #! Change angle accordingly
+    def movePlane(self, x, y, b, alt, lat, long):
+        dataFont = font.Font(family='Ubuntu', size=18)
+        self.mapFrame.canvas.drawPlane(x, y, b)
+        self.latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=lat, font=dataFont)
+        self.longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=long, font=dataFont)
+        self.altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=alt, font=dataFont)
+
 
 def loop():
   """ Main program loop running alongside Tkinter mainloop """
@@ -133,8 +141,11 @@ def loop():
   
   #! CODE BEING LOOPED BELOW
   
-  longWS84, latWS84, longPixel, latPixel = gps.access()
-  win.children.get('!eyeflight').movePlane(longPixel, latPixel)
+  longWS84, latWS84, longPixel, latPixel, bearing, altitude = gps.access()
+
+  if (latPixel != "NA") & (longPixel != "NA"):
+    win.children.get('!eyeflight').movePlane(longPixel, latPixel, -bearing, altitude, latWS84, longWS84)
+
   #? Ici tu peux appeler la fonction pour récupérer les coordonnées GPS puis les transformer en coordonnées image
   #? Après tu peux appeler win.children.get('!eyeflight').movePlane(x,y)
   #? à tester je sais pas si ça récupère l'instance de la classe ou juste la classe elle même
@@ -143,7 +154,7 @@ def loop():
   
   #! CODE BEING LOOPED ABOVE
   
-  win.after(1, loop) # loops the function
+  win.after(500, loop) # loops the function
 
 if __name__=='__main__':
   win = tk.Tk()
