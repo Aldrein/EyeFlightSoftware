@@ -118,12 +118,12 @@ class EyeFlight(tk.Frame):
 
     def __dataPlacement(self):
         dataFont = font.Font(family='Ubuntu', size=18)
-        latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=latWS84, font=dataFont)
-        latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
-        longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=longWS84, font=dataFont)
-        longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
-        altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
-        altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
+        self.latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=latWS84, font=dataFont)
+        self.latLabel.place(anchor='center', relx=.5, rely=.2, relwidth=.8, relheight=.2)
+        self.longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=longWS84, font=dataFont)
+        self.longLabel.place(anchor='center', relx=.5, rely=.5, relwidth=.8, relheight=.2)
+        self.altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=altitude, font=dataFont)
+        self.altLabel.place(anchor='center', relx=.5, rely=.8, relwidth=.8, relheight=.2)
         
     def movePlane(self, x, y, b, alt, lat, long):
         dataFont = font.Font(family='Ubuntu', size=18)
