@@ -128,9 +128,9 @@ class EyeFlight(tk.Frame):
     def movePlane(self, x, y, b, alt, lat, long):
         dataFont = font.Font(family='Ubuntu', size=18)
         self.mapFrame.canvas.drawPlane(x, y, b)
-        self.latLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=lat, font=dataFont)
-        self.longLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=long, font=dataFont)
-        self.altLabel = tk.Label(master=self.dataFrame, background=darkGrayColor, fg='white', text=alt, font=dataFont)
+        self.latLabel.configure(text=lat)
+        self.longLabel.configure(text=long)
+        self.altLabel.configure(text=alt)
 
 
 def loop():
